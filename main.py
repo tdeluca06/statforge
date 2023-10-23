@@ -11,38 +11,70 @@ games_api = cfbd.GamesApi(cfbd.ApiClient(config))
 ratings_api = cfbd.RatingsApi(cfbd.ApiClient(config))
 teams_api = cfbd.TeamsApi(cfbd.ApiClient(config))
 
-def build_list():
+def build_dict():
+    """
+    Function to build a dictionary 'team_ratings' of FBS teams and their SRS ratings.
+
+    Returns: a dictionary of team SRS ratings
+    """
+    team_ratings = {}
+    conferences = ['AAC', 'acc', 'B12', 'B1G', 'CUSA', 'Ind', 'MAC', 'MWC', 'PAC', 'SEC', 'SBC']
+
+    for conference in conferences:
+        srs_list = ratings_api.get_srs_ratings(year=2023, conference=conference)
+        for entry in srs_list:
+            team_ratings[entry.team] = entry.rating
+
+    return team_ratings
+
+
+def get_data(current):
    """
-   Function to build a list 'total_srs' of FBS teams and their SRS ratings. 
+   Function to get data on college football games in the current week, and create a list
+   of tuples in the format "away_team vs home_team".
 
-   Returns: a formatted list of SRS ratings by team
+   Parameters:
+   current - integer value specifying which calender week of the CFB regular season to 
+   pull data from.
+
+   Returns - a list of tuples in the format "away_team vs home_team" of the current week.
    """
-   total_srs_strings = []
-   american_srs = ratings_api.get_srs_ratings(year=2023, conference='AAC')
-   acc_srs = ratings_api.get_srs_ratings(year=2023, conference='acc')
-   big12_srs = ratings_api.get_srs_ratings(year=2023, conference='B12')
-   bigten_srs = ratings_api.get_srs_ratings(year=2023, conference='B1G')
-   conf_usa_srs = ratings_api.get_srs_ratings(year=2023, conference='CUSA')
-   independents_srs = ratings_api.get_srs_ratings(year=2023, conference='Ind')
-   mid_srs = ratings_api.get_srs_ratings(year=2023, conference='MAC')
-   mountain_srs = ratings_api.get_srs_ratings(year=2023, conference='MWC')
-   pac12_srs = ratings_api.get_srs_ratings(year=2023, conference='PAC')
-   sec_srs = ratings_api.get_srs_ratings(year=2023, conference='SEC')
-   sunbelt_srs= ratings_api.get_srs_ratings(year=2023, conference='SBC')
+   games = games_api.get_game_media(year=2023, week=current, classification='fbs')
+   #print(games)
+   game_tuples = []
 
-   total_srs = [
-      american_srs, acc_srs, big12_srs, sec_srs,
-      bigten_srs, conf_usa_srs, independents_srs,
-      mid_srs, mountain_srs, pac12_srs, sunbelt_srs ]
+   for game in games:
+      away_team = game.away_team
+      home_team = game.home_team
+      game_tuple = (away_team, home_team)
+      game_tuples.append(game_tuple)
    
-   for srs_list in total_srs:
-      for entry in srs_list:
-         total_srs_strings.append("{}: {}".format(entry.team, entry.rating))
-   
-   return total_srs_strings
+   return game_tuples
 
-def controller():
-   print(build_list())
+def calculate_odds(current_week):
+    teams_srs = build_dict()
+    games_data = get_data(current_week)
 
-def get_data(week):
-   request = "https://api.collegefootballdata.com/games/media?year=2023&week=9&classification=fbs"
+    odds = {}
+
+    for away_team, home_team in games_data:
+        away_srs = teams_srs.get(away_team, 0)  
+        home_srs = teams_srs.get(home_team, 0)  
+        
+        calculated_odds = (home_srs + 2.5) - away_srs
+
+        odds[f"{away_team} vs {home_team}"] = calculated_odds
+
+    return odds
+
+def print_odds(odds):
+    for game, calculated_odds in odds.items():
+        formatted_odds = "{}, {:.1f}".format(game, calculated_odds)
+        print(formatted_odds)
+
+def launch():
+  odds = calculate_odds(9)
+  print_odds(odds)
+  return 0
+      
+launch()
