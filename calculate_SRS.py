@@ -1,4 +1,4 @@
-from getData import APIDataFetcher
+from get_data import APIDataFetcher
 
 class CalculateSRSLine:
     def __init__(self, api_fetcher):
@@ -13,7 +13,7 @@ class CalculateSRSLine:
             for entry in srs_list:
                 team_ratings[entry.team] = entry.rating
 
-        return team_ratings
+            return team_ratings
     
     def get_data(self, current_week):
         games = self.api_fetcher.games_api.get_game_media(year=2023, week=current_week, classification='fbs')
