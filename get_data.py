@@ -7,6 +7,7 @@ class APIDataFetcher:
         self.ratings_api = cfbd.RatingsApi(self.api_client)
         self.games_api = cfbd.GamesApi(self.api_client)
         self.metrics_api = cfbd.MetricsApi(self.api_client)
+        self.stats_api = cfbd.StatsApi(self.api_client)
 
     def _create_api_client(self):
         config = cfbd.Configuration()

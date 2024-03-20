@@ -9,6 +9,5 @@ class CalculateHavoc:
         # filter teams that arent in FBS
         conferences = ['AAC', 'acc', 'B12', 'B1G', 'CUSA', 'Ind', 'MAC', 'MWC', 'PAC', 'SEC', 'SBC']
 
-        data = self.api_fetcher.stats_api.get_advanced_team_stats(exclude_garbage_time=true)
-        print(data)
+        havoc_list = self.api_fetcher.stats_api.get_advanced_team_stats()
 

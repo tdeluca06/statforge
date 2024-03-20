@@ -87,8 +87,8 @@ def launch():
 
   # Print adjusted SRS odds
   print("Adjusted SRS Odds:")
-  #for matchup, adjusted_srs_line in adjusted_factors.items():
-      #print(f"{matchup}: {adjusted_srs_line}")
+  for matchup, adjusted_srs_line in adjusted_factors.items():
+      print(f"{matchup}: {adjusted_srs_line}")
 
   havoc_factor = calculate_havoc(api_fetcher, week)
 
