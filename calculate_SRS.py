@@ -16,8 +16,8 @@ class CalculateSRSLine:
                     team_ratings[entry.team] = entry.rating
             except Exception as e:
                 print(f"Error getting SRS data for: {conference}")
-
-            return team_ratings
+        #print(team_ratings)
+        return team_ratings
     
     def calculate_odds (self, current_week):
         teams_srs = self.build_dict()
@@ -26,13 +26,13 @@ class CalculateSRSLine:
         odds = {}
 
         for away_team, home_team in games_data:
-            away_srs = teams_srs.get(away_team, 0)
-            home_srs = teams_srs.get(home_team, 0)
-
-            calculated_odds = (home_srs + 2.5) - away_srs
-
-            odds[f"{away_team} vs {home_team}"] = calculated_odds
-
+            away_srs = teams_srs.get(away_team)
+            home_srs = teams_srs.get(home_team)
+            if home_srs is not None and away_srs is not None:
+                calculated_odds = (home_srs + 2.5) - away_srs
+                odds[f"{away_team} vs {home_team}"] = calculated_odds
+            else:
+                print(f"Invalid SRS values for {away_team} vs {home_team}")
         return odds
     
     def print_odds(self, odds):

@@ -7,7 +7,7 @@ class CalculatePPAFactor:
         self.team_ppa = {}
     
     def build_dict(self):
-        conferences = ['AAC', 'acc', 'B12', 'B1G', 'CUSA', 'MAC', 'MWC', 'PAC', 'SEC', 'SBC'] # Missing Ind
+        conferences = ['Ind', 'AAC', 'acc', 'B12', 'B1G', 'CUSA', 'MAC', 'MWC', 'PAC', 'SEC', 'SBC'] # Missing Ind
 
         for conference in conferences:
             print(f"Fetching PPA data for {conference}...")
@@ -119,7 +119,7 @@ class CalculatePPAFactor:
                 'home_team' : game['home_team'],
                 'defense_factor' : defense_factor
             })
-
+        
         return defense_factors
         
     def calculate_total_factor(self, week, offense_factors, defense_factors):
