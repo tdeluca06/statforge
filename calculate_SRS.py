@@ -1,5 +1,6 @@
 from get_data import APIDataFetcher
 from utils import build_game_tuples
+from main import year
 
 class CalculateSRSLine:
     def __init__(self, api_fetcher):
@@ -11,7 +12,7 @@ class CalculateSRSLine:
 
         for conference in conferences:
             try:
-                srs_list = self.api_fetcher.ratings_api.get_srs_ratings(year=2023, conference=conference)
+                srs_list = self.api_fetcher.ratings_api.get_srs_ratings(year=year, conference=conference)
                 for entry in srs_list:
                     team_ratings[entry.team] = entry.rating
             except Exception as e:
