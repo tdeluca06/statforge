@@ -1,11 +1,10 @@
 from get_data import APIDataFetcher
 from utils import build_game_tuples
-from main import year
 
 def build_dict(api_fetcher):
     # filter teams that arent in FBS
     conferences = ['American Athletic', 'ACC', 'Big 12', 'Big Ten', 'Conference USA', 'FBS Independents', 'Mid-American', 'Mountain West', 'Pac-12', 'SEC', 'Sun Belt']
-    data = api_fetcher.stats_api.get_advanced_team_season_stats(year=year, exclude_garbage_time=True)
+    data = api_fetcher.stats_api.get_advanced_team_season_stats(year=2023, exclude_garbage_time=True)
     team_stats = {}   
         
     for entry in data:

@@ -1,6 +1,5 @@
 from get_data import APIDataFetcher
 from utils import build_game_tuples
-from main import year
 
 class CalculatePPAFactor:
     def __init__(self, api_fetcher):
@@ -13,8 +12,8 @@ class CalculatePPAFactor:
         for conference in conferences:
             print(f"Fetching PPA data for {conference}...")
             try:
-                offense_list = self.api_fetcher.metrics_api.get_team_ppa(year=year, conference=conference, exclude_garbage_time=True)
-                defense_list = self.api_fetcher.metrics_api.get_team_ppa(year=year, conference=conference, exclude_garbage_time=True)
+                offense_list = self.api_fetcher.metrics_api.get_team_ppa(year=2023, conference=conference, exclude_garbage_time=True)
+                defense_list = self.api_fetcher.metrics_api.get_team_ppa(year=2023, conference=conference, exclude_garbage_time=True)
 
                 for entry in offense_list:
                     team = entry.team

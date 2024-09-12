@@ -1,6 +1,6 @@
 from get_data import APIDataFetcher
 from utils import build_game_tuples
-from main import year
+from config import year
 
 class CalculateSRSLine:
     def __init__(self, api_fetcher):

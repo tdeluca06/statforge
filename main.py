@@ -7,8 +7,6 @@ from calculate_PPA import CalculatePPAFactor
 from calculate_havoc import CalculateHavocTop
 from calculate_havoc import CalculateHavocBottom
 
-year = 2024
-
 def calculate_srs(api_fetcher, week):
    # Create class instance
    srs_calculator = CalculateSRSLine(api_fetcher)
