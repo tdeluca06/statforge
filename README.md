@@ -38,7 +38,7 @@ pip install -r requirements.txt
 Statforge expects a .env file in the **root** of the project.
 
 ```ini
-CFBD_API_KEY=your_api_key_here
+API_KEY=your_api_key_here
 ```
 
 ### 4. Configure season year
