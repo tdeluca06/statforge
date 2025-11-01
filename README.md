@@ -21,10 +21,6 @@ StatForge performs best during the **mid-to-late regular season**, when enough g
 
 ---
 
-## Project Structure
-
-...
-
 ## Setup
 
 ### 1. Clone the repository
