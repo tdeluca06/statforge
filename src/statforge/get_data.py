@@ -1,4 +1,11 @@
 import cfbd
+import os
+
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 class APIDataFetcher:
     def __init__(self, api_key):
@@ -10,7 +17,7 @@ class APIDataFetcher:
         self.stats_api = cfbd.StatsApi(self.api_client)
 
     def _create_api_client(self):
-        config = cfbd.Configuration()
-        config.api_key['Authorization'] = self.api_key
-        config.api_key_prefix['Authorization'] = 'Bearer'
+        config = cfbd.Configuration(access_token=os.getenv("API_KEY"))
+        # config.api_key['Authorization'] = self.api_key.strip()
+        # config.api_key_prefix['Authorization'] = 'Bearer'
         return cfbd.ApiClient(config)
