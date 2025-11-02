@@ -15,7 +15,7 @@ It combines these into a single **adjusted SRS line** for each matchup.
 - **PPA** — Measures offensive and defensive play efficiency.  
 - **Havoc** — Evaluates how disruptive a defense is based on negative plays.  
 - **Adjusted Model** — Merges SRS, PPA, and Havoc for a more complete team comparison.  
-- **Modular Design** — Each metric runs independently, connected through `main.py`.  
+- **Modular Design** — Each metric runs independently, orchestrated through `main.py`.  
 
 StatForge performs best during the **mid-to-late regular season**, when enough game data has accumulated to stabilize team efficiency metrics.
 
