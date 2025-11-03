@@ -1,5 +1,7 @@
-.env
-
+# Directories
 __pycache__/
+.venv/
 
+# Files
+.env
 .DS_Store

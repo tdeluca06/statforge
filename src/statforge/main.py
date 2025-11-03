@@ -16,9 +16,12 @@ def get_api_key() -> str:
     """
     Function to get the API_KEY from the environment variable. Modularized into a
     function for unit testing. Exits with error code 1 if API_KEY isn't found.
+
+    All API work will soon be designated to get_data in a more robust data loader.
+
     :return: API_KEY from .env
     """
-    api_key: str | None = os.getenv("API_KEY")
+    api_key: str | None = os.getenv("CFBD_API_KEY")
     if not api_key:
         sys.exit("Error: Missing API_KEY environment variable.")
     return api_key
