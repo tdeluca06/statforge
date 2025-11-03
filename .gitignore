@@ -1,6 +1,7 @@
 # Directories
 __pycache__/
 .venv/
+.idea/
 
 # Files
 .env
