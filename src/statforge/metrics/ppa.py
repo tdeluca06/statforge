@@ -4,89 +4,33 @@ Module for calculating Predicted Points Added (PPA) factors using data from CFBD
 Predicted Points Added is an efficiency metric measuring the expected change in a team's
 scoring potential resulting from a singular play.
 
-This module defines the CalculatePPAFactor class, which fetches offensive and defensive
-PPA metrics by conference, builds matchup data for each week, and computes the derived
-PPA factors (offensive, defensive, total) used in the calculation of total influence.
+This module defines the CalculatePPAFactor class, which computes the PPA factors
+(offensive, defensive, total) used in the calculation of total influence.
 """
-
-from cfbd import TeamSeasonPredictedPointsAdded
-
-from src.statforge.config import year
-from src.statforge.get_data import APIDataFetcher
-from src.utils import build_game_tuples
 
 
 class CalculatePPAFactor:
     """
-    Class to handle PPA data retrieval and calculation per-game.
+    Class to handle PPA calculation per-game.
 
     Attributes:
-        api_fetcher: An initialized APIDataFetcher instance for CFBD API calls
+        games: A list of game tuples for the given week
         team_ppa: Cached dict to map teams to their offensive and defensive PPA metrics
     """
 
-    def __init__(self, api_fetcher: APIDataFetcher) -> None:
+    def __init__(
+        self, games: list[tuple], team_ppa: dict[str, dict[str, float]]
+    ) -> None:
         """
-        Initialize the calculator with a data fetcher.
-        :param api_fetcher: An initialized APIDataFetcher instance for CFBD API calls
+        Initialize the calculator with a list of games and a dict mapping teams to
+        PPA values
+        :param games: a list of tuples containing matchups
+        :param team_ppa: a dict mapping teams to PPA values
         """
-        self.api_fetcher = api_fetcher
-        self.team_ppa: dict[str, dict[str, float]] = {}
+        self.games = games
+        self.team_ppa = team_ppa
 
-    def build_dict(self) -> dict[str, dict[str, float]]:
-        """
-        Function to build a dict mapping a team to their offensive and defensive PPA
-        metrics.
-        Fetches and stores values in a nested dict of the form:
-            {
-                "Team Name": {
-                    "offense": <offensive PPA>,
-                    "defense": <defensive PPA>
-                },
-                ...
-            }
-
-        :return: a dict mapping team -> offensive, defensive PPA metrics
-        """
-        conferences: list[str] = [
-            "FBS Independents",
-            "American Athletic",
-            "ACC",
-            "Big 12",
-            "Big Ten",
-            "Conference USA",
-            "Mid-American",
-            "Mountain West",
-            "Pac-12",
-            "SEC",
-            "Sun Belt",
-        ]
-
-        for conference in conferences:
-            print(f"Fetching PPA data for {conference}...")
-            try:
-                rows: list[TeamSeasonPredictedPointsAdded] = (
-                    self.api_fetcher.metrics_api.get_predicted_points_added_by_team(
-                        year=year, conference=conference, exclude_garbage_time=True
-                    )
-                )
-
-                for entry in rows:
-                    team: str = entry.team
-                    if team not in self.team_ppa:
-                        self.team_ppa[team] = {}
-
-                    if entry.offense:
-                        self.team_ppa[team]["offense"] = entry.offense.overall
-                    if entry.defense:
-                        self.team_ppa[team]["defense"] = entry.defense.overall
-
-            except Exception as e:
-                print(f"Error fetching data for {conference}: {e}")
-
-        return self.team_ppa
-
-    def build_game_data(self, week: int) -> list[dict[str, float]]:
+    def build_game_data(self) -> list[dict[str, float]]:
         """
         Function to construct a list of per-game PPA data for all matchups in a given
         week. Each matchup is represented as:
@@ -99,13 +43,11 @@ class CalculatePPAFactor:
                 "home_team_defense": <float>
             }
 
-        :param week: week to fetch data from
         :return: a list of dictionaries containing team PPA data for each matchup
         """
-        game_tuples: list[tuple] = build_game_tuples(self.api_fetcher, week)
         game_ppa_list: list[dict[str, float]] = []
 
-        for away_team, home_team in game_tuples:
+        for away_team, home_team in self.games:
             if away_team in self.team_ppa and home_team in self.team_ppa:
                 away_offense: float = self.team_ppa[away_team].get("offense", 0)
                 away_defense: float = self.team_ppa[away_team].get("defense", 0)
@@ -130,7 +72,7 @@ class CalculatePPAFactor:
 
         return game_ppa_list
 
-    def calculate_offense_factors(self, week: int) -> list[dict[str, float]]:
+    def calculate_offense_factors(self) -> list[dict[str, float]]:
         """
         Function to calculate total offensive PPA factor per game, and map each game to
         the calculated factor. Each matchup is represented as:
@@ -140,10 +82,9 @@ class CalculatePPAFactor:
                 "offensive_factor": <float>
             }
 
-        :param week: week to calculate for
         :return: a list of dictionaries containing PPA offensive factors per game
         """
-        game_data: list[dict[str, float]] = self.build_game_data(week)
+        game_data: list[dict[str, float]] = self.build_game_data()
         offense_factors: list[dict[str, float]] = []
 
         for game in game_data:
@@ -163,7 +104,7 @@ class CalculatePPAFactor:
 
         return offense_factors
 
-    def calculate_defense_factors(self, week: int) -> list[dict[str, float]]:
+    def calculate_defense_factors(self) -> list[dict[str, float]]:
         """
         Function to calculate total defensive PPA factor per game, and map each game to
         the calculated factor. Each matchup is represented as:
@@ -173,11 +114,10 @@ class CalculatePPAFactor:
                 "defensive_factor": <float>
             }
 
-        :param week: week to calculate for
         :return: a list of dictionaries containing PPA defensive factors per game
         """
 
-        game_data: list[dict[str, float]] = self.build_game_data(week)
+        game_data: list[dict[str, float]] = self.build_game_data()
         defense_factors: list[dict[str, float]] = []
 
         for game in game_data:
@@ -213,8 +153,8 @@ class CalculatePPAFactor:
         :param week: week to calculate for
         :return: a list of dictionaries containing PPA total factors per game
         """
-        offense_factors: list[dict[str, float]] = self.calculate_offense_factors(week)
-        defense_factors: list[dict[str, float]] = self.calculate_defense_factors(week)
+        offense_factors: list[dict[str, float]] = self.calculate_offense_factors()
+        defense_factors: list[dict[str, float]] = self.calculate_defense_factors()
         total_factors: list[dict[str, float]] = []
 
         for i in range(min(len(offense_factors), len(defense_factors))):

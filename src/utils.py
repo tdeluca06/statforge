@@ -1,17 +1,4 @@
-# Common functions used across different files
-from src.statforge.config import year
-
-
-def build_game_tuples(api_fetcher, current_week):
-    games = api_fetcher.games_api.get_media(
-        year=year, week=current_week, classification="fbs"
-    )
-    game_tuples = []
-
-    for game in games:
-        away_team = game.away_team
-        home_team = game.home_team
-        game_tuple = (away_team, home_team)
-        game_tuples.append(game_tuple)
-
-    return game_tuples
+"""
+Previously, this file contained a function for building game tuples. This work has been
+offloaded to the new central data loader in data_loader.py.
+"""
