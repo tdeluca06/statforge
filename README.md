@@ -3,7 +3,9 @@
 StatForge is a modular Python analytics engine for college football metrics. 
 It integrates the [CollegeFootballData API](https://collegefootballdata.com) 
 to calculate and adjust team performance indicators such as **Simple Rating 
-System (SRS)**, **Predicted Points Added (PPA)**, and **Havoc Rate**.
+System (SRS)**, **Predicted Points Added (PPA)**, and **Havoc Rate**. 
+Statforge is built for scalibility, and will include more team performance indicators
+in the future.
 
 It combines these into a single **adjusted SRS line** for each matchup.
 
